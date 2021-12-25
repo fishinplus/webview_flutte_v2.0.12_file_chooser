@@ -15,6 +15,7 @@ import static io.flutter.plugins.webviewflutter.Constants.WEBVIEW_STORAGE_DIRECT
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -116,8 +117,11 @@ public class FileChooserActivity extends Activity {
       return null;
     }
 
-    // Create the File where the output should go
-    Uri captureOutputUri = getTempUri(fileFormat);
+    ContentValues contentValues = new ContentValues(2);
+    String imageName = System.currentTimeMillis() + "." + fileFormat;
+    contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, imageName);
+    contentValues.put(MediaStore.Images.Media.MIME_TYPE, fileFormat == "jpg" ? "image/jpeg" : "video/mp4");
+    Uri captureOutputUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
     potentialCaptureOutputUris.add(captureOutputUri);
 
     captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, captureOutputUri);
